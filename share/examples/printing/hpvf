@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# $FreeBSD: projects/armv6/share/examples/printing/hpvf 232120 2012-02-24 18:39:55Z cognet $
+#
+#  hpvf - Convert GIF files into HP/PCL, then print
+#  Installed in /usr/local/libexec/hpvf
+
+giftopnm | ppmtopgm | pgmtopbm | pbmtolj -resolution 300 \
+    && exit 0 \
+    || exit 2

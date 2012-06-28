@@ -1,0 +1,2 @@
+.\" $FreeBSD: projects/armv6/tools/build/options/WITHOUT_ZONEINFO 171994 2007-08-27 20:01:08Z remko $
+Set to not build the timezone database

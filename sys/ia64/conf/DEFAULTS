@@ -1,0 +1,22 @@
+#
+# DEFAULTS -- Default kernel configuration file for FreeBSD/ia64
+#
+# $FreeBSD: projects/armv6/sys/ia64/conf/DEFAULTS 234858 2012-05-01 04:01:22Z gonzo $
+
+machine		ia64
+
+# Bus support.
+device		acpi		# ACPI support
+
+# Pseudo devices.
+device		io		# I/O & EFI runtime device
+device		mem		# Memory and kernel memory devices
+
+# UART chips on this platform
+device		uart_ns8250
+
+options 	GEOM_PART_BSD
+options 	GEOM_PART_GPT
+options 	GEOM_PART_MBR
+
+options 	NEW_PCIB

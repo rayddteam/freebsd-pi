@@ -1,0 +1,4 @@
+# $FreeBSD: projects/armv6/tools/regression/bin/sh/expansion/arith12.0 234858 2012-05-01 04:01:22Z gonzo $
+
+_x=4 y_=5 z_z=6
+[ "$((_x*100+y_*10+z_z))" = 456 ]

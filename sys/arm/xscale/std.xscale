@@ -1,0 +1,4 @@
+# $FreeBSD: projects/armv6/sys/arm/xscale/std.xscale 233882 2012-04-04 19:40:15Z cognet $
+options		ARM_CACHE_LOCK_ENABLE
+options		NO_EVENTTIMERS
+options		ARM_WANT_TP_ADDRESS

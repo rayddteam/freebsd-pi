@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# $FreeBSD: projects/armv6/etc/rc.d/SERVERS 232120 2012-02-24 18:39:55Z cognet $
+#
+
+# PROVIDE: SERVERS
+# REQUIRE: mountcritremote abi ldconfig savecore watchdogd
+
+#	This is a dummy dependency, for early-start servers relying on
+#	some basic configuration.

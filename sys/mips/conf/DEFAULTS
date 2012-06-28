@@ -1,0 +1,11 @@
+#
+# DEFAULTS -- Default kernel configuration file for FreeBSD/mips
+#
+# $FreeBSD: projects/armv6/sys/mips/conf/DEFAULTS 234858 2012-05-01 04:01:22Z gonzo $
+
+device		mem
+
+device		uart_ns8250
+
+options 	GEOM_PART_BSD
+options 	GEOM_PART_MBR

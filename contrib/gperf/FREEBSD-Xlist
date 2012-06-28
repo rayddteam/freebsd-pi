@@ -1,0 +1,12 @@
+$FreeBSD: projects/armv6/contrib/gperf/FREEBSD-Xlist 228136 2011-11-29 15:24:19Z cognet $
+*/*.dvi
+*/*.html
+*/*.info
+*/*.ps
+*/texinfo.tex
+*/tests
+*/getopt*
+*/*.pdf
+*/*.vms
+*/*.msvc
+*/*.woe32

@@ -1,0 +1,6 @@
+# $FreeBSD: projects/armv6/tools/regression/bin/sh/expansion/cmdsubst12.0 232120 2012-02-24 18:39:55Z cognet $
+
+f() {
+	echo x$(printf foo >&2)y
+}
+[ "$(f 2>&1)" = "fooxy" ]

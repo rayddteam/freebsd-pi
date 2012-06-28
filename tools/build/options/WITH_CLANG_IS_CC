@@ -1,0 +1,8 @@
+.\" $FreeBSD: projects/armv6/tools/build/options/WITH_CLANG_IS_CC 234858 2012-05-01 04:01:22Z gonzo $
+Set to install the Clang C/C++ compiler as
+.Pa /usr/bin/cc
+,
+.Pa /usr/bin/c++
+and
+.Pa /usr/bin/cpp
+.

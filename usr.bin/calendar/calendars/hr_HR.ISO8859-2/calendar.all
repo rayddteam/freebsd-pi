@@ -1,0 +1,12 @@
+/*
+ *  hrvatski calendar
+ *
+ * $FreeBSD: projects/armv6/usr.bin/calendar/calendars/hr_HR.ISO8859-2/calendar.all 232120 2012-02-24 18:39:55Z cognet $
+ */
+
+#ifndef _hr_HR_ISO8859_2_all_
+#define _hr_HR_ISO8859_2_all_
+
+#include <hr_HR.ISO8859-2/calendar.praznici>
+
+#endif /* !_hr_HR_ISO8859_2_all_ */

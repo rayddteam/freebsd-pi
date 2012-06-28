@@ -1,0 +1,6 @@
+.\" $FreeBSD: projects/armv6/tools/build/options/WITH_SHARED_TOOLCHAIN 234858 2012-05-01 04:01:22Z gonzo $
+Set to build the toolchain binaries shared.
+The set includes
+.Xr cc 1 ,
+.Xr make 1
+and neccessary utilites like assembler, linker and library archive manager.

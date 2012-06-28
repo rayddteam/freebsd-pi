@@ -1,0 +1,12 @@
+# $FreeBSD: projects/armv6/sys/mips/adm5120/std.adm5120 234858 2012-05-01 04:01:22Z gonzo $
+#
+# Standard include file for ADM5120
+
+files		"../adm5120/files.adm5120"
+
+machine		mips mipsel
+cpu		CPU_MIPS4KC
+
+# device 	admpci
+device		admsw
+device		pci

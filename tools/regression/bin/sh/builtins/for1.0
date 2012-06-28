@@ -1,0 +1,4 @@
+# $FreeBSD: projects/armv6/tools/regression/bin/sh/builtins/for1.0 228136 2011-11-29 15:24:19Z cognet $
+
+false
+for i in `false`; do exit 3; done

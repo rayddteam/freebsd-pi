@@ -1,0 +1,10 @@
+# $FreeBSD: projects/armv6/lib/libprocstat/Versions.def 234858 2012-05-01 04:01:22Z gonzo $
+
+# This version was first added to 9.0-current.
+FBSD_1.2 {
+};
+
+# This version was first added to 10.0-current.
+FBSD_1.3 {
+} FBSD_1.2;
+

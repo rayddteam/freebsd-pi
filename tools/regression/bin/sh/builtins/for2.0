@@ -1,0 +1,9 @@
+# $FreeBSD: projects/armv6/tools/regression/bin/sh/builtins/for2.0 232120 2012-02-24 18:39:55Z cognet $
+
+r=x
+f() { return 42; }
+f
+for i in x; do
+	r=$?
+done
+[ "$r" = 42 ]

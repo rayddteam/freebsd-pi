@@ -1,0 +1,10 @@
+# $FreeBSD: projects/armv6/gnu/usr.bin/cc/Makefile.ver 226747 2011-10-25 19:47:28Z cognet $
+
+BASEVER!=	cat ${GCCDIR}/BASE-VER
+DATESTAMP!=	cat ${GCCDIR}/DATESTAMP
+DEVPHASE!=	cat ${GCCDIR}/DEV-PHASE
+
+version.o: version.c ${GCCDIR}/BASE-VER ${GCCDIR}/DATESTAMP ${GCCDIR}/DEV-PHASE
+	${CC} ${CFLAGS} -DBASEVER=\"${BASEVER}\" \
+		-DDATESTAMP=\"\ ${DATESTAMP}\" \
+		-DDEVPHASE=\"\ ${DEVPHASE}\" -c ${.IMPSRC}

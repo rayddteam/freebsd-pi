@@ -1,0 +1,7 @@
+# $FreeBSD: projects/armv6/sys/mips/nlm/std.xlp 228136 2011-11-29 15:24:19Z cognet $
+files	"../nlm/files.xlp"
+cpu	CPU_NLM
+
+# Devices needed always
+device		uart
+device		pci

@@ -1,0 +1,6 @@
+# $FreeBSD: projects/armv6/sys/arm/mv/std.mv 233882 2012-04-04 19:40:15Z cognet $
+
+files		"../mv/files.mv"
+cpu		CPU_ARM9E
+makeoptions	CONF_CFLAGS="-march=armv5te"
+options		ARM_WANT_TP_ADDRESS

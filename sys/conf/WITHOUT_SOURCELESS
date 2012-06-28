@@ -1,0 +1,7 @@
+#
+# WITHOUT_SOURCELESS -- Disable drivers that include sourceless code.
+#
+# $FreeBSD: projects/armv6/sys/conf/WITHOUT_SOURCELESS 232120 2012-02-24 18:39:55Z cognet $
+
+include WITHOUT_SOURCELESS_HOST
+include WITHOUT_SOURCELESS_UCODE

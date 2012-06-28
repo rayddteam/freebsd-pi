@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# $FreeBSD: projects/armv6/etc/rc.d/bsnmpd 232120 2012-02-24 18:39:55Z cognet $
+#
+
+# PROVIDE: bsnmpd
+# REQUIRE: NETWORKING syslogd
+# KEYWORD: nojail shutdown
+
+. /etc/rc.subr
+
+name="bsnmpd"
+rcvar="bsnmpd_enable"
+command="/usr/sbin/${name}"
+pidfile="/var/run/snmpd.pid"
+
+load_rc_config $name
+run_rc_command "$1"

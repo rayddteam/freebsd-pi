@@ -1,0 +1,9 @@
+# /*
+#  *    This product includes software developed by the University of
+#  *    California, Berkeley and its contributors."
+# */
+# $FreeBSD: projects/armv6/sys/mips/cavium/std.octeon1 234858 2012-05-01 04:01:22Z gonzo $
+# 
+files	"../cavium/files.octeon1"
+machine	mips mips64
+cpu		CPU_CNMIPS

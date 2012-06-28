@@ -1,0 +1,2 @@
+.\" $FreeBSD: projects/armv6/tools/build/options/WITHOUT_SOURCELESS_UCODE 232120 2012-02-24 18:39:55Z cognet $
+Set to not build kernel modules that include sourceless microcode.

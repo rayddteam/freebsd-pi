@@ -1,0 +1,5 @@
+# $FreeBSD: projects/armv6/sys/mips/conf/XLP.hints 234858 2012-05-01 04:01:22Z gonzo $
+
+# RTC
+hint.ds1374_rtc.0.at="iicbus1"
+hint.ds1374_rtc.0.addr=0xd0

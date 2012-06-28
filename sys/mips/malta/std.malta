@@ -1,0 +1,12 @@
+# $FreeBSD: projects/armv6/sys/mips/malta/std.malta 234858 2012-05-01 04:01:22Z gonzo $
+files	"../malta/files.malta"
+
+cpu		CPU_MIPS4KC
+device		pci
+device		ata
+options 	ATA_CAM
+
+device		scbus		# SCSI bus (required for ATA/SCSI)
+device		cd		# CD
+device		da		# Direct Access (disks)
+device		pass		# Passthrough device (direct ATA/SCSI access)

@@ -1,0 +1,10 @@
+# $FreeBSD: projects/armv6/sys/mips/sentry5/std.sentry5 234858 2012-05-01 04:01:22Z gonzo $
+#
+
+machine		mips mipsel
+
+cpu		CPU_MIPS4KC
+options		CPU_SENTRY5			# XXX should this be a
+						# sub-cpu option?
+files		"../sentry5/files.sentry5"
+

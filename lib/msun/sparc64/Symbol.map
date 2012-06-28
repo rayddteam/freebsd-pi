@@ -1,0 +1,13 @@
+/*
+ * $FreeBSD: projects/armv6/lib/msun/sparc64/Symbol.map 226747 2011-10-25 19:47:28Z cognet $
+ */
+FBSD_1.0 {
+};
+
+FBSD_1.3 {
+	fesetexceptflag;
+	feraiseexcept;
+	fegetenv;
+	feholdexcept;
+	feupdateenv;
+};

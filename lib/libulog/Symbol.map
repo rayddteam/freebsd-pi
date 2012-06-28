@@ -1,0 +1,17 @@
+/*
+ * $FreeBSD: projects/armv6/lib/libulog/Symbol.map 226747 2011-10-25 19:47:28Z cognet $
+ */
+
+FBSD_1.2 {
+	ulog_login;
+	ulog_login_pseudo;
+	ulog_logout;
+	ulog_logout_pseudo;
+
+	addToUtmp;
+	removeFromUtmp;
+	removeLineFromUtmp;
+	utempter_add_record;
+	utempter_remove_added_record;
+	utempter_remove_record;
+};

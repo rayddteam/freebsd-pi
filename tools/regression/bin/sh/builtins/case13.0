@@ -1,0 +1,12 @@
+# $FreeBSD: projects/armv6/tools/regression/bin/sh/builtins/case13.0 232120 2012-02-24 18:39:55Z cognet $
+
+case ^ in
+[\^^]) ;;
+*) echo Failed at $LINENO ;;
+esac
+
+case s in
+[\^^]) echo Failed at $LINENO ;;
+[s\]]) ;;
+*) echo Failed at $LINENO ;;
+esac

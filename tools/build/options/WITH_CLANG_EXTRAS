@@ -1,0 +1,2 @@
+.\" $FreeBSD: projects/armv6/tools/build/options/WITH_CLANG_EXTRAS 232120 2012-02-24 18:39:55Z cognet $
+Set to build additional clang and llvm tools, such as bugpoint.

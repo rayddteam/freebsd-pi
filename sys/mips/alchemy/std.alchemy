@@ -1,0 +1,8 @@
+# $FreeBSD: projects/armv6/sys/mips/alchemy/std.alchemy 234858 2012-05-01 04:01:22Z gonzo $
+# Standard include file for Alchemy Au1xxx CPUs: 
+# Au1000, Au1200, Au1250, Au1500 and Au1550
+
+files	"../alchemy/files.alchemy"
+
+machine		mips mipsel
+cpu		CPU_MIPS4KC

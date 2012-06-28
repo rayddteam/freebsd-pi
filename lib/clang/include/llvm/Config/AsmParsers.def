@@ -1,0 +1,6 @@
+/* $FreeBSD: projects/armv6/lib/clang/include/llvm/Config/AsmParsers.def 210299 2010-07-20 17:16:57Z ed $ */
+
+LLVM_ASM_PARSER(ARM)
+LLVM_ASM_PARSER(X86)
+
+#undef LLVM_ASM_PARSER

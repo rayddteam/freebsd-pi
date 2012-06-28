@@ -1,0 +1,6 @@
+# $FreeBSD: projects/armv6/tools/regression/bin/sh/builtins/case12.0 228136 2011-11-29 15:24:19Z cognet $
+
+false
+case x in
+y)
+esac

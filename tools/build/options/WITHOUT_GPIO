@@ -1,0 +1,4 @@
+.\" $FreeBSD: projects/armv6/tools/build/options/WITHOUT_GPIO 228136 2011-11-29 15:24:19Z cognet $
+Set to not build
+.Xr gpioctl 8
+as part of the base system.

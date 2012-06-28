@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# $FreeBSD: projects/armv6/etc/rc.d/NETWORKING 226747 2011-10-25 19:47:28Z cognet $
+#
+
+# PROVIDE: NETWORKING NETWORK
+# REQUIRE: netif netoptions routing ppp ipfw stf faith
+# REQUIRE: defaultroute routed mrouted route6d mroute6d resolv bridge
+# REQUIRE: static_arp static_ndp
+
+#	This is a dummy dependency, for services which require networking
+#	to be operational before starting.

@@ -1,0 +1,8 @@
+# $FreeBSD: projects/armv6/sys/arm/s3c2xx0/std.s3c2410 233882 2012-04-04 19:40:15Z cognet $
+
+files	"../s3c2xx0/files.s3c2xx0"
+cpu	CPU_ARM9
+
+makeoptions	CONF_CFLAGS=-mcpu=arm920t
+options		NO_EVENTTIMERS
+options		ARM_WANT_TP_ADDRESS

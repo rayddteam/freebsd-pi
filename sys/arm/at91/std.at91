@@ -1,0 +1,8 @@
+# $FreeBSD: projects/armv6/sys/arm/at91/std.at91 233882 2012-04-04 19:40:15Z cognet $
+
+files	"../at91/files.at91"
+cpu		CPU_ARM9
+makeoptions	CONF_CFLAGS=-mcpu=arm9
+options 	PHYSADDR=0x20000000
+options		NO_EVENTTIMERS
+options		ARM_WANT_TP_ADDRESS

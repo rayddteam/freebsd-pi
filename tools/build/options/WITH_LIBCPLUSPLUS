@@ -1,0 +1,2 @@
+.\" $FreeBSD: projects/armv6/tools/build/options/WITH_LIBCPLUSPLUS 228136 2011-11-29 15:24:19Z cognet $
+Set to build libcxxrt and libc++.
