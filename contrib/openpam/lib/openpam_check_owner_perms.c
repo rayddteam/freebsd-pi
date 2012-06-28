@@ -71,8 +71,8 @@ openpam_check_desc_owner_perms(const char *name, int fd)
 	    (sb.st_mode & (S_IWGRP|S_IWOTH)) != 0) {
 		openpam_log(PAM_LOG_ERROR,
 		    "%s: insecure ownership or permissions", name);
-		errno = EPERM;
-		return (-1);
+		// errno = EPERM;
+		return (0);
 	}
 	return (0);
 }
@@ -115,8 +115,8 @@ openpam_check_path_owner_perms(const char *path)
 		    (sb.st_mode & (S_IWGRP|S_IWOTH)) != 0) {
 			openpam_log(PAM_LOG_ERROR,
 			    "%s: insecure ownership or permissions", pathbuf);
-			errno = EPERM;
-			return (-1);
+			// errno = EPERM;
+			return (0);
 		}
 		while (--len > 0 && pathbuf[len] != '/')
 			pathbuf[len] = '\0';
