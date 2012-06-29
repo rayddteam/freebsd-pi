@@ -308,8 +308,6 @@ initarm(void *mdp, void *unused __unused)
 	void *kmdp;
 	u_int l1pagetable;
 	int i = 0, j = 0;
-	volatile uint32_t *dr = (uint32_t*)0x20201000;
-	volatile uint32_t *fr = (uint32_t*)0x20201018;
 
 	kmdp = NULL;
 	lastaddr = 0;
@@ -439,12 +437,6 @@ initarm(void *mdp, void *unused __unused)
 
 	valloc_pages(msgbufpv, round_page(msgbufsize) / PAGE_SIZE);
 
-	while (*fr & 32)
-		;
-	*dr = 'Z';
-
-
-
 	/*
 	 * Now we start construction of the L1 page table
 	 * We start by mapping the L2 page tables into the L1.
@@ -466,30 +458,11 @@ initarm(void *mdp, void *unused __unused)
 		    &kernel_pt_table[i]);
 
 	pmap_curmaxkvaddr = l2_start + (l2size - 1) * L1_S_SIZE;
-
-
-	while (*fr & 32)
-		;
-	*dr = 'Z';
-
-	for (i = 28; i >= 0; i -= 4)
-	{
-		static char *x = "0123456789ABCDEF";
-		while (*fr & 32)
-			;
-		*dr = x[((uint32_t)(lastaddr) >> i) & 0xf];
-	}
 	
 	/* Map kernel code and data */
 	pmap_map_chunk(l1pagetable, KERNVIRTADDR, KERNPHYSADDR,
 	   (((uint32_t)(lastaddr) - KERNVIRTADDR) + PAGE_MASK) & ~PAGE_MASK,
 	    VM_PROT_READ|VM_PROT_WRITE, PTE_CACHE);
-
-	while (*fr & 32)
-		;
-	*dr = 'Z';
-
-
 
 	/* Map L1 directory and allocated L2 page tables */
 	pmap_map_chunk(l1pagetable, kernel_l1pt.pv_va, kernel_l1pt.pv_pa,
@@ -527,20 +500,9 @@ initarm(void *mdp, void *unused __unused)
 
 	pmap_pa = kernel_l1pt.pv_pa;
 
-	while (*fr & 32)
-		;
-	*dr = '9';
 	setttb(kernel_l1pt.pv_pa);
 	cpu_tlb_flushID();
 	cpu_domains(DOMAIN_CLIENT << (PMAP_DOMAIN_KERNEL * 2));
-
-	dr = (uint32_t*)0xf2201000;
-	fr = (uint32_t*)0xf2201018;
-
-	while (*fr & 32)
-		;
-	*dr = 'Z';
-
 
 	/*
 	 * Only after the SOC registers block is mapped we can perform device
@@ -551,12 +513,6 @@ initarm(void *mdp, void *unused __unused)
 	cninit();
 
 	physmem = memsize / PAGE_SIZE;
-
-	while (*fr & 32)
-		;
-	*dr = 'Y';
-
-
 
 	debugf("initarm: console initialized\n");
 	debugf(" arg1 mdp = 0x%08x\n", (uint32_t)mdp);
@@ -655,9 +611,9 @@ platform_devmap_init(void)
 {
 	int i = 0;
 
-	fdt_devmap[i].pd_va = 0xE4C00000;
-	fdt_devmap[i].pd_pa = 0x44C00000;       /* L4_WKUP */
-	fdt_devmap[i].pd_size = 0x400000;       /* 4 MB */
+	fdt_devmap[i].pd_va = 0xf2000000;
+	fdt_devmap[i].pd_pa = 0x20000000;       
+	fdt_devmap[i].pd_size = 0x01000000;       /* 1 MB */
 	fdt_devmap[i].pd_prot = VM_PROT_READ | VM_PROT_WRITE;
 	fdt_devmap[i].pd_cache = PTE_DEVICE;
 	i++;
