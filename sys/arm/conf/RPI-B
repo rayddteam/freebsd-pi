@@ -73,7 +73,7 @@ device		mii
 device		smc
 device		smcphy
 device		uart
-device		uart_ns8250
+device		pl011
 
 device		gpio
 
