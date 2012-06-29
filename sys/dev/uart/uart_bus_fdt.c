@@ -188,6 +188,8 @@ uart_cpu_getdev(int devtype, struct uart_devinfo *di)
 		class = &uart_lpc_class;
 	if (fdt_is_compatible(node, "ns16550"))
 		class = &uart_ns8250_class;
+	if (fdt_is_compatible(node, "arm,pl011"))
+		class = &uart_pl011_class;
 
 	di->bas.chan = 0;
 	di->bas.regshft = (u_int)shift;
