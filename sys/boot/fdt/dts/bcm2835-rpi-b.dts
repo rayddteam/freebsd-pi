@@ -12,10 +12,6 @@
 		serial = <0 0>;			/* Set by VideoCore */
 	};
 
-	chosen {
-		bootargs = "";			/* Set by VideoCore */
-	};
-
 	cpus {
 		cpu@0 {
 			compatible = "arm,1176jzf-s";
@@ -484,12 +480,13 @@
 			};
 		};
 
-		uart0 {
+		uart0: uart0 {
 			compatible = "broadcom,bcm2835-uart", "broadcom,bcm2708-uart", "arm,pl011", "arm,primecell";
 			reg = <0x201000 0x1000>;
 			interrupts = <2 25>;
 
 			clock-frequency = <3000000>;	/* Set by VideoCore */
+			reg-shift = <2>;
 		};
 
 		spi {
@@ -594,6 +591,16 @@
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
 		};
+	};
+
+	aliases {
+		uart0 = &uart0;
+	};
+
+	chosen {
+		bootargs = "";			/* Set by VideoCore */
+		stdin = "uart0";
+		stdout = "uart0";
 	};
 
 };
