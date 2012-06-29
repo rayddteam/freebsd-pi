@@ -537,7 +537,7 @@
 
 	memory {
 		device_type = "memory";
-		reg = <0 0x10000000>; /* 256MB */
+		reg = <0 0x08000000>; /* 128MB */
 	};
 
 	leds {
