@@ -2026,6 +2026,7 @@ dev/ubsec/ubsec.c		optional ubsec
 #
 dev/usb/controller/at91dci.c		optional at91dci
 dev/usb/controller/at91dci_atmelarm.c	optional at91dci at91rm9200
+dev/usb/controller/dwc_otg.c		optional dwc_otg
 dev/usb/controller/musb_otg.c		optional musb
 dev/usb/controller/musb_otg_atmelarm.c	optional musb at91rm9200
 dev/usb/controller/ehci.c		optional ehci
