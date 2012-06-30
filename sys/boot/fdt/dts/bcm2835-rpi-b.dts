@@ -36,15 +36,6 @@
 		reg = <0x20000000 0x01000000>;
 		ranges = <0 0x20000000 0x01000000>;
 
-		timer {
-			compatible = "broadcom,bcm2835-system-timer", "broadcom,bcm2708-system-timer";
-			reg = <0x3000 0x1000>;
-			interrupts = <8 9 10 11>;
-			interrupt-parent = <&intc>;
-
-			clock-frequency = <1000000>;
-		};
-
 		intc: interrupt-controller {
 			compatible = "broadcom,bcm2835-armctrl-ic", "broadcom,bcm2708-armctrl-ic";
 			reg = <0xB200 0x200>;
@@ -100,6 +91,15 @@
 			 * 14: PWA1		30: VC_ARASANSDIO
 			 * 15: CPR		31: AVSPMON
 			 */
+		};
+
+		timer {
+			compatible = "broadcom,bcm2835-system-timer", "broadcom,bcm2708-system-timer";
+			reg = <0x3000 0x1000>;
+			interrupts = <8 9 10 11>;
+			interrupt-parent = <&intc>;
+
+			clock-frequency = <1000000>;
 		};
 
 		armtimer {
