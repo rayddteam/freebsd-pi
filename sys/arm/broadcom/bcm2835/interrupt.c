@@ -45,18 +45,34 @@ __FBSDID("$FreeBSD$");
 #include <dev/ofw/ofw_bus.h>
 #include <dev/ofw/ofw_bus_subr.h>
 
+#define	INTC_PENDING_BASIC	0x00
+#define	INTC_PENDING_BANK1	0x04
+#define	INTC_PENDING_BANK2	0x08
+#define	INTC_FIQ_CONTROL	0x0C
+#define	INTC_ENABLE_BANK1	0x10
+#define	INTC_ENABLE_BANK2	0x14
+#define	INTC_ENABLE_BASIC	0x18
+#define	INTC_DISABLE_BANK1	0x1C
+#define	INTC_DISABLE_BANK2	0x20
+#define	INTC_DISABLE_BASIC	0x24
+
+#define	BANK1_START	8
+#define	BANK1_END	(BANK1_START + 32 - 1)
+#define	BANK2_START	(BANK1_START + 32)
+#define	BANK2_END	(BANK2_START + 32 - 1)
+
+#define	IS_IRQ_BASIC(n)	(((n) >= 0) && ((n) < BANK1_START))
+#define	IS_IRQ_BANK1(n)	(((n) >= BANK1_START) && ((n) <= BANK1_END))
+#define	IS_IRQ_BANK2(n)	(((n) >= BANK2_START) && ((n) <= BANK1_END))
+#define	IRQ_BANK1(n)	((n) - BANK1_START)
+#define	IRQ_BANK2(n)	((n) - BANK2_START)
+
 struct brcm_intc_softc {
 	device_t		sc_dev;
 	struct resource *	intc_res;
 	bus_space_tag_t		intc_bst;
 	bus_space_handle_t	intc_bsh;
 };
-
-static struct resource_spec brcm_intc_spec[] = {
-	{ SYS_RES_MEMORY,	0,	RF_ACTIVE },
-	{ -1, 0 }
-};
-
 
 static struct brcm_intc_softc *brcm_intc_sc = NULL;
 
@@ -68,7 +84,7 @@ static struct brcm_intc_softc *brcm_intc_sc = NULL;
 static int
 brcm_intc_probe(device_t dev)
 {
-	if (!ofw_bus_is_compatible(dev, "roadcom,bcm2835-armctrl-ic"))
+	if (!ofw_bus_is_compatible(dev, "broadcom,bcm2835-armctrl-ic"))
 		return (ENXIO);
 	device_set_desc(dev, "BCM2835 Interrupt Controller");
 	return (BUS_PROBE_DEFAULT);
@@ -78,14 +94,16 @@ static int
 brcm_intc_attach(device_t dev)
 {
 	struct		brcm_intc_softc *sc = device_get_softc(dev);
+	int		rid = 0;
 
 	sc->sc_dev = dev;
 
 	if (brcm_intc_sc)
 		return (ENXIO);
 
-	if (bus_alloc_resources(dev, brcm_intc_spec, &sc->intc_res)) {
-		device_printf(dev, "could not allocate resources\n");
+	sc->intc_res = bus_alloc_resource_any(dev, SYS_RES_MEMORY, &rid, RF_ACTIVE);
+	if (sc->intc_res == NULL) {
+		device_printf(dev, "could not allocate memory resource\n");
 		return (ENXIO);
 	}
 
@@ -116,17 +134,60 @@ DRIVER_MODULE(intc, simplebus, brcm_intc_driver, brcm_intc_devclass, 0, 0);
 int
 arm_get_next_irq(int last_irq)
 {
-	return -1;
+	uint32_t pending;
+	int32_t irq = last_irq + 1;
+
+	/* Sanity check */
+	if (irq < 0)
+		irq = 0;
+	
+	/* TODO: should we mask last_irq? */
+	pending = intc_read_4(INTC_PENDING_BASIC);
+	while (irq < BANK1_START) {
+		if (pending & (1 << irq))
+			return irq;
+		irq++;
+	}
+
+	pending = intc_read_4(INTC_PENDING_BANK1);
+	while (irq < BANK2_START) {
+		if (pending & (1 << irq))
+			return irq;
+		irq++;
+	}
+
+	pending = intc_read_4(INTC_PENDING_BANK2);
+	while (irq < BANK2_START) {
+		if (pending & (1 << irq))
+			return irq;
+		irq++;
+	}
+
+	return (-1);
 }
 
 void
 arm_mask_irq(uintptr_t nb)
 {
-	// TODO: implement me
+	if (IS_IRQ_BASIC(nb))
+		intc_write_4(INTC_DISABLE_BASIC, (1 << nb));
+	else if (IS_IRQ_BANK1(nb))
+		intc_write_4(INTC_DISABLE_BANK1, (1 << nb));
+	else if (IS_IRQ_BANK2(nb))
+		intc_write_4(INTC_DISABLE_BANK2, (1 << nb));
+	else
+		printf("arm_mask_irq: Invalid IRQ number: %d\n", nb);
 }
 
 void
 arm_unmask_irq(uintptr_t nb)
 {
-	// TODO: implement me
+	if (IS_IRQ_BASIC(nb))
+		intc_write_4(INTC_ENABLE_BASIC, (1 << nb));
+	else if (IS_IRQ_BANK1(nb))
+		intc_write_4(INTC_ENABLE_BANK1, (1 << nb));
+	else if (IS_IRQ_BANK2(nb))
+		intc_write_4(INTC_ENABLE_BANK2, (1 << nb));
+	else
+		printf("arm_mask_irq: Invalid IRQ number: %d\n", nb);
 }
