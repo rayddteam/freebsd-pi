@@ -180,7 +180,6 @@ DRIVER_MODULE(brcm_systimer, simplebus, brcm_systimer_driver, brcm_systimer_devc
 void
 cpu_initclocks(void)
 {
-	cpu_initclocks_bsp();
 }
 
 void
