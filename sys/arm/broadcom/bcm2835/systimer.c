@@ -223,7 +223,7 @@ brcm_systimer_attach(device_t dev)
 		sc->st[i].index = i;
 		sc->st[i].enabled = 0;
 		sc->st[i].et.et_name = malloc(64, M_DEVBUF, M_NOWAIT | M_ZERO);
-		sprintf(sc->st[i].et.et_name, "BCM2835 Event Timer %d\n", i + 1);
+		sprintf(sc->st[i].et.et_name, "BCM2835 Event Timer %d", i + 1);
 		sc->st[i].et.et_flags = ET_FLAGS_ONESHOT;
 		sc->st[i].et.et_quality = 1000;
 		sc->st[i].et.et_frequency = sc->sysclk_freq;
