@@ -67,14 +67,11 @@ __FBSDID("$FreeBSD$");
 #define	IRQ_BANK1(n)	((n) - BANK1_START)
 #define	IRQ_BANK2(n)	((n) - BANK2_START)
 
-#define  DEBUG
 #ifdef  DEBUG
 #define dprintf(fmt, args...) printf(fmt, ##args)
 #else
 #define dprintf(fmt, args...)
 #endif
-
-
 
 struct brcm_intc_softc {
 	device_t		sc_dev;
@@ -162,7 +159,7 @@ arm_get_next_irq(int last_irq)
 
 	pending = intc_read_4(INTC_PENDING_BANK1);
 	while (irq < BANK2_START) {
-		if (pending & (1 << irq)) {
+		if (pending & (1 << IRQ_BANK1(irq))) {
 			dprintf("%s: %d -> %d\n", __func__, last_irq, irq);
 			return irq;
 		}
@@ -171,7 +168,7 @@ arm_get_next_irq(int last_irq)
 
 	pending = intc_read_4(INTC_PENDING_BANK2);
 	while (irq < BANK2_START) {
-		if (pending & (1 << irq)) {
+		if (pending & (1 << IRQ_BANK2(irq))) {
 			dprintf("%s: %d -> %d\n", __func__, last_irq, irq);
 			return irq;
 		}
@@ -189,9 +186,9 @@ arm_mask_irq(uintptr_t nb)
 	if (IS_IRQ_BASIC(nb))
 		intc_write_4(INTC_DISABLE_BASIC, (1 << nb));
 	else if (IS_IRQ_BANK1(nb))
-		intc_write_4(INTC_DISABLE_BANK1, (1 << nb));
+		intc_write_4(INTC_DISABLE_BANK1, (1 << IRQ_BANK1(nb)));
 	else if (IS_IRQ_BANK2(nb))
-		intc_write_4(INTC_DISABLE_BANK2, (1 << nb));
+		intc_write_4(INTC_DISABLE_BANK2, (1 << IRQ_BANK2(nb)));
 	else
 		printf("arm_mask_irq: Invalid IRQ number: %d\n", nb);
 }
@@ -204,9 +201,9 @@ arm_unmask_irq(uintptr_t nb)
 	if (IS_IRQ_BASIC(nb))
 		intc_write_4(INTC_ENABLE_BASIC, (1 << nb));
 	else if (IS_IRQ_BANK1(nb))
-		intc_write_4(INTC_ENABLE_BANK1, (1 << nb));
+		intc_write_4(INTC_ENABLE_BANK1, (1 << IRQ_BANK1(nb)));
 	else if (IS_IRQ_BANK2(nb))
-		intc_write_4(INTC_ENABLE_BANK2, (1 << nb));
+		intc_write_4(INTC_ENABLE_BANK2, (1 << IRQ_BANK2(nb)));
 	else
 		printf("arm_mask_irq: Invalid IRQ number: %d\n", nb);
 }
