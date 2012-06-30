@@ -52,6 +52,8 @@ __FBSDID("$FreeBSD$");
 #include <machine/fdt.h>
 
 #define	BCM2835_NUM_TIMERS	4
+
+#define	DEFAULT_TIMER		3
 #define	DEFAULT_FREQUENCY	1000000
 
 #define	SYSTIMER_CS	0x00
@@ -123,16 +125,15 @@ brcm_systimer_start(struct eventtimer *et, struct bintime *first,
 	uint32_t count;
 
 	if (first != NULL) {
+		st->enabled = 1;
+
 		count = (st->et.et_frequency * (first->frac >> 32)) >> 32;
 		if (first->sec != 0)
 			count += st->et.et_frequency * first->sec;
 
-
 		clo = brcm_systimer_tc_read_4(SYSTIMER_CLO);
 		clo += count;
 		brcm_systimer_tc_write_4(SYSTIMER_C0 + st->index*4, clo);
-
-		st->enabled = 1;
 
 		return (0);
 	} 
@@ -153,13 +154,12 @@ static int
 brcm_systimer_intr(void *arg)
 {
 	struct systimer *st = (struct systimer *)arg;
-	uint32_t status;
 
+	brcm_systimer_tc_write_4(SYSTIMER_CS, (1 << st->index));
 	if (st->enabled) {
-		status = brcm_systimer_tc_read_4(SYSTIMER_CLO);
-		if (status & (1 << st->index))
-			if (st->et.et_active)
-				st->et.et_event_cb(&st->et, st->et.et_arg);
+		if (st->et.et_active) {
+			st->et.et_event_cb(&st->et, st->et.et_arg);
+		}
 	}
 	
 	return (FILTER_HANDLED);
@@ -183,7 +183,6 @@ static int
 brcm_systimer_attach(device_t dev)
 {
 	struct brcm_systimer_softc *sc = device_get_softc(dev);
-	int i;
 	int err;
 	int rid = 0;
 
@@ -210,36 +209,38 @@ brcm_systimer_attach(device_t dev)
 	/* TODO: get frequency from FDT */
 	sc->sysclk_freq = DEFAULT_FREQUENCY;
 
-	for (i = 0; i < BCM2835_NUM_TIMERS; i++) {
-		/* Setup and enable the timer */
-		if (bus_setup_intr(dev, sc->irq_res[i], INTR_TYPE_CLK,
-				brcm_systimer_intr, NULL, &sc->st[i], &sc->intr_hl[i]) != 0) {
-			bus_release_resources(dev, brcm_systimer_irq_spec,
-				sc->irq_res);
-			device_printf(dev, "Unable to setup the clock irq handler.\n");
-			return (ENXIO);
-		}
-
-		sc->st[i].index = i;
-		sc->st[i].enabled = 0;
-		sc->st[i].et.et_name = malloc(64, M_DEVBUF, M_NOWAIT | M_ZERO);
-		sprintf(sc->st[i].et.et_name, "BCM2835 Event Timer %d", i + 1);
-		sc->st[i].et.et_flags = ET_FLAGS_ONESHOT;
-		sc->st[i].et.et_quality = 1000;
-		sc->st[i].et.et_frequency = sc->sysclk_freq;
-		sc->st[i].et.et_min_period.sec = 0;
-		sc->st[i].et.et_min_period.frac =
-		    ((0x00000002LLU << 32) / sc->st[i].et.et_frequency) << 32;
-		sc->st[i].et.et_max_period.sec = 0xfffffff0U / sc->st[i].et.et_frequency;
-		sc->st[i].et.et_max_period.frac =
-		    ((0xfffffffeLLU << 32) / sc->st[i].et.et_frequency) << 32;
-		sc->st[i].et.et_start = brcm_systimer_start;
-		sc->st[i].et.et_stop = brcm_systimer_stop;
-		sc->st[i].et.et_priv = &sc->st[i];
-		et_register(&sc->st[i].et);
+	/* Setup and enable the timer */
+	if (bus_setup_intr(dev, sc->irq_res[DEFAULT_TIMER], INTR_TYPE_CLK,
+			brcm_systimer_intr, NULL, &sc->st[DEFAULT_TIMER],
+			&sc->intr_hl[DEFAULT_TIMER]) != 0) {
+		bus_release_resources(dev, brcm_systimer_irq_spec,
+			sc->irq_res);
+		device_printf(dev, "Unable to setup the clock irq handler.\n");
+		return (ENXIO);
 	}
 
+	sc->st[DEFAULT_TIMER].index = DEFAULT_TIMER;
+	sc->st[DEFAULT_TIMER].enabled = 0;
+	sc->st[DEFAULT_TIMER].et.et_name = malloc(64, M_DEVBUF, M_NOWAIT | M_ZERO);
+	sprintf(sc->st[DEFAULT_TIMER].et.et_name, "BCM2835 Event Timer %d", DEFAULT_TIMER);
+	sc->st[DEFAULT_TIMER].et.et_flags = ET_FLAGS_ONESHOT;
+	sc->st[DEFAULT_TIMER].et.et_quality = 1000;
+	sc->st[DEFAULT_TIMER].et.et_frequency = sc->sysclk_freq;
+	sc->st[DEFAULT_TIMER].et.et_min_period.sec = 0;
+	sc->st[DEFAULT_TIMER].et.et_min_period.frac =
+	    ((0x00000002LLU << 32) / sc->st[DEFAULT_TIMER].et.et_frequency) << 32;
+	sc->st[DEFAULT_TIMER].et.et_max_period.sec = 0xfffffff0U / sc->st[DEFAULT_TIMER].et.et_frequency;
+	sc->st[DEFAULT_TIMER].et.et_max_period.frac =
+	    ((0xfffffffeLLU << 32) / sc->st[DEFAULT_TIMER].et.et_frequency) << 32;
+	sc->st[DEFAULT_TIMER].et.et_start = brcm_systimer_start;
+	sc->st[DEFAULT_TIMER].et.et_stop = brcm_systimer_stop;
+	sc->st[DEFAULT_TIMER].et.et_priv = &sc->st[DEFAULT_TIMER];
+	et_register(&sc->st[DEFAULT_TIMER].et);
+
 	brcm_systimer_sc = sc;
+
+	brcm_systimer_tc.tc_frequency = DEFAULT_FREQUENCY;
+	tc_init(&brcm_systimer_tc);
 
 	return (0);
 }
@@ -263,8 +264,10 @@ DRIVER_MODULE(brcm_systimer, simplebus, brcm_systimer_driver, brcm_systimer_devc
 void
 cpu_initclocks(void)
 {
+	cpu_initclocks_bsp();
 }
 
+int foo_bar = 0;
 void
 DELAY(int usec)
 {
@@ -286,6 +289,8 @@ DELAY(int usec)
 
 	while (counts > 0) {
 		last = brcm_systimer_tc_read_4(SYSTIMER_CLO);
+		if (last == first)
+			continue;
 		if (last>first) {
 			counts -= (int32_t)(last - first);
 		} else {
