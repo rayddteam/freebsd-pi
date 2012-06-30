@@ -452,6 +452,16 @@
 			reg-shift = <2>;
 		};
 
+
+		usb {
+			compatible = "broadcom,bcm2835-usb", "broadcom,bcm2708-usb", "synopsys,designware-hs-otg2";
+			reg = <0x980000 0x20000>;
+			interrupts = <17>;
+			interrupt-parent = <&intc>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
 	};
 
 
