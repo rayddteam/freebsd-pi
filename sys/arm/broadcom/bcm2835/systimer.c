@@ -252,7 +252,7 @@ static device_method_t brcm_systimer_methods[] = {
 };
 
 static driver_t brcm_systimer_driver = {
-	"bcm2835_systimer",
+	"systimer",
 	brcm_systimer_methods,
 	sizeof(struct brcm_systimer_softc),
 };
