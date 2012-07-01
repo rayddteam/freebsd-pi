@@ -167,7 +167,7 @@ arm_get_next_irq(int last_irq)
 	}
 
 	pending = intc_read_4(INTC_PENDING_BANK2);
-	while (irq < BANK2_START) {
+	while (irq <= BANK2_END) {
 		if (pending & (1 << IRQ_BANK2(irq))) {
 			dprintf("%s: %d -> %d\n", __func__, last_irq, irq);
 			return irq;
