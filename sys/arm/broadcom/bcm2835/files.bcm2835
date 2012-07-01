@@ -5,6 +5,7 @@ arm/broadcom/bcm2835/dwc_otg_brcm.c		optional dwc_otg
 arm/broadcom/bcm2835/interrupt.c	standard
 arm/broadcom/bcm2835/systimer.c		standard
 arm/broadcom/bcm2835/mbox.c		standard
+arm/broadcom/bcm2835/framebuffer.c		standard
 
 kern/kern_clocksource.c                         standard
 

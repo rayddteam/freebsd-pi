@@ -18,16 +18,6 @@
 		};
 	};
 
-	display {
-		compatible = "broadcom,bcm2835-fb", "broadcom,bcm2708-fb";
-
-		broadcom,vc-mailbox = <&vc_mbox>;
-		broadcom,vc-channel = <1>;
-
-		broadcom,width = <0>;		/* Set by VideoCore */
-		broadcom,height = <0>;		/* Set by VideoCore */
-		broadcom,depth = <0>;		/* Set by VideoCore */
-	};
 
 	axi {
 		compatible = "simple-bus";
@@ -462,6 +452,16 @@
 			#size-cells = <0>;
 		};
 
+		display {
+			compatible = "broadcom,bcm2835-fb", "broadcom,bcm2708-fb";
+
+			broadcom,vc-mailbox = <&vc_mbox>;
+			broadcom,vc-channel = <1>;
+
+			broadcom,width = <0>;		/* Set by VideoCore */
+			broadcom,height = <0>;		/* Set by VideoCore */
+			broadcom,depth = <0>;		/* Set by VideoCore */
+		};
 	};
 
 
