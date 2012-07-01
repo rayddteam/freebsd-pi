@@ -73,6 +73,13 @@ __FBSDID("$FreeBSD$");
 	mtx_unlock(&brcm_mbox_sc->lock);	\
 } while(0)
 
+#define  DEBUG
+#ifdef  DEBUG
+#define dprintf(fmt, args...) printf(fmt, ##args)
+#else
+#define dprintf(fmt, args...)
+#endif
+
 struct brcm_mbox_softc {
 	struct mtx		lock;
 	struct resource *	mem_res;
@@ -108,6 +115,7 @@ brcm_mbox_intr(void *arg)
 			printf("brcm_mbox_intr: channel %d oveflow\n", chan);
 			continue;
 		}
+		dprintf("brcm_mbox_intr: chan %d, data %08x\n", chan, data);
 		sc->msg[chan] = data;
 		sc->valid[chan] = 1;
 		wakeup(&sc->msg[chan]);
@@ -203,6 +211,7 @@ brcm_mbox_write(int chan, uint32_t data)
 {
 	int limit = 20000;
 
+	dprintf("brcm_mbox_write: chan %d, data %08x\n", chan, data);
 	MBOX_LOCK;
 
 	while ((mbox_read_4(REG_STATUS) & STATUS_FULL) && limit--) {
@@ -226,12 +235,14 @@ brcm_mbox_read(int chan, uint32_t *data)
 {
 	struct brcm_mbox_softc *sc = brcm_mbox_sc;
 
+	dprintf("brcm_mbox_read: chan %d\n", chan);
 	MBOX_LOCK;
 	while (!sc->valid[chan])
 		msleep(&sc->msg[chan], &sc->lock, PZERO, "vcio mbox read", 0);
 	*data = MBOX_DATA(brcm_mbox_sc->msg[chan]);
 	brcm_mbox_sc->valid[chan] = 0;
 	MBOX_UNLOCK;
+	dprintf("brcm_mbox_read: chan %d, data %08x\n", chan, *data);
 
 	return (0);
 }
