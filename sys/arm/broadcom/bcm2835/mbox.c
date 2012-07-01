@@ -109,6 +109,7 @@ brcm_mbox_intr(void *arg)
 	MBOX_LOCK;
 	while (!(mbox_read_4(REG_STATUS) & STATUS_EMPTY)) {
 		msg = mbox_read_4(REG_READ);
+		dprintf("brcm_mbox_intr: raw data %08x\n", msg);
 		chan = MBOX_CHAN(msg);
 		data = MBOX_DATA(msg);
 		if (sc->valid[chan]) {
@@ -179,6 +180,8 @@ brcm_mbox_attach(device_t dev)
 	}
 
 	brcm_mbox_sc = sc;
+	/* Read all pending messages */
+	brcm_mbox_intr(sc);
 
 	/* Should be called after brcm_mbox_sc initialization */
 	mbox_write_4(REG_CONFIG, CONFIG_DATA_IRQ);
@@ -239,7 +242,7 @@ brcm_mbox_read(int chan, uint32_t *data)
 	MBOX_LOCK;
 	while (!sc->valid[chan])
 		msleep(&sc->msg[chan], &sc->lock, PZERO, "vcio mbox read", 0);
-	*data = MBOX_DATA(brcm_mbox_sc->msg[chan]);
+	*data = brcm_mbox_sc->msg[chan];
 	brcm_mbox_sc->valid[chan] = 0;
 	MBOX_UNLOCK;
 	dprintf("brcm_mbox_read: chan %d, data %08x\n", chan, *data);
