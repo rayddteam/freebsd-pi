@@ -60,7 +60,7 @@ __FBSDID("$FreeBSD$");
 #include <dev/ofw/ofw_bus_subr.h>
 
 #include <arm/broadcom/bcm2835/mbox.h>
-
+#include <arm/broadcom/bcm2835/vcbus.h>
 
 struct brcm_fb_config {
 	uint32_t	xres;
@@ -102,10 +102,11 @@ brcm_fb_init(void *arg)
 	int err;
 	volatile struct brcm_fb_config*	fb_config = sc->fb_config;
 
+	/* TODO: replace it with FDT stuff */
 	fb_config->xres = 1184;
 	fb_config->yres = 928;
-	fb_config->vxres = 1184;
-	fb_config->vyres = 928;
+	fb_config->vxres = 0;
+	fb_config->vyres = 0;
 	fb_config->xoffset = 0;
 	fb_config->yoffset = 0;
 	fb_config->bpp = 24;
@@ -120,7 +121,6 @@ brcm_fb_init(void *arg)
 	bus_dmamap_sync(sc->dma_tag, sc->dma_map,
 		BUS_DMASYNC_POSTREAD);
 
-
 	if (err == 0) {
 		device_printf(sc->dev, "%dx%d(%dx%d@%d,%d) %dbpp\n", 
 			fb_config->xres, fb_config->yres,
@@ -129,7 +129,7 @@ brcm_fb_init(void *arg)
 			fb_config->bpp);
 
 
-		device_printf(sc->dev, "pitch %d, base %08x, screen_size %d\n", 
+		device_printf(sc->dev, "pitch %d, base 0x%08x, screen_size %d\n", 
 			fb_config->pitch, fb_config->base,
 			fb_config->screen_size);
 	}
@@ -211,7 +211,7 @@ brcm_fb_dmamap_cb(void *arg, bus_dma_segment_t *segs, int nseg, int err)
 		return;
 
 	addr = (bus_addr_t*)arg;
-	*addr = segs[0].ds_addr;
+	*addr = PHYS_TO_VCBUS(segs[0].ds_addr);
 }
 
 static device_method_t brcm_fb_methods[] = {
