@@ -106,7 +106,7 @@ device		random		# Entropy device
 
 # USB support
 device		usb
-device		dwc_otg
+# device		dwc_otg
 options 	USB_DEBUG
 #options	USB_REQ_DEBUG
 #options		USB_VERBOSE
