@@ -34,13 +34,23 @@
 #define V_MAX_ADAPTERS		8		/* XXX */
 
 /* some macros */
-#if defined(__amd64__) || defined(__i386__)
+#if defined(__amd64__) || defined(__i386__) || defined(__arm__)
 #define bcopy_io(s, d, c)	bcopy((void *)(s), (void *)(d), (c))
 #define bcopy_toio(s, d, c)	bcopy((void *)(s), (void *)(d), (c))
 #define bcopy_fromio(s, d, c)	bcopy((void *)(s), (void *)(d), (c))
 #define bzero_io(d, c)		bzero((void *)(d), (c))
 #define fill_io(p, d, c)	fill((p), (void *)(d), (c))
 #define fillw_io(p, d, c)	fillw((p), (void *)(d), (c))
+#if defined(__arm__)
+#define	readw(a)		(*(uint16_t*)(a))
+#define	writew(a, v)		(*(uint16_t*)(a) = (v))
+static __inline void
+fillw(int val, uint16_t *buf, size_t size)
+{
+	while (size--)
+		*buf++ = val;
+}
+#endif
 #elif defined(__ia64__) || defined(__sparc64__)
 #if defined(__ia64__)
 #include <machine/bus.h>

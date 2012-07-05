@@ -42,7 +42,7 @@ __FBSDID("$FreeBSD: projects/armv6/sys/dev/syscons/schistory.c 232120 2012-02-24
 #include <sys/kernel.h>
 #include <sys/malloc.h>
 
-#if defined(__sparc64__) || defined(__powerpc__)
+#if defined(__sparc64__) || defined(__powerpc__) || defined(__arm__)
 #include <machine/sc_machdep.h>
 #else
 #include <machine/pc/display.h>

@@ -58,3 +58,6 @@ AT91_TSC		opt_at91.h
 AT91_KWIKBYTE		opt_at91.h
 AT91_MCI_HAS_4WIRE	opt_at91.h
 AT91_MCI_SLOT_B		opt_at91.h
+GFB_DEBUG		opt_gfb.h
+GFB_NO_FONT_LOADING	opt_gfb.h
+GFB_NO_MODE_CHANGE	opt_gfb.h

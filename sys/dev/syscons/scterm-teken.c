@@ -40,7 +40,7 @@ __FBSDID("$FreeBSD: projects/armv6/sys/dev/syscons/scterm-teken.c 228136 2011-11
 #include <sys/consio.h>
 #include <sys/kbio.h>
 
-#if defined(__sparc64__) || defined(__powerpc__)
+#if defined(__sparc64__) || defined(__powerpc__) || defined(__arm__)
 #include <machine/sc_machdep.h>
 #else
 #include <machine/pc/display.h>
