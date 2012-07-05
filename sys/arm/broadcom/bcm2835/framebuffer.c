@@ -66,10 +66,10 @@ __FBSDID("$FreeBSD$");
 #include <arm/broadcom/bcm2835/mbox.h>
 #include <arm/broadcom/bcm2835/vcbus.h>
 
-#define	BCMFB_FONT_HEIGHT	8
+#define	BCMFB_FONT_HEIGHT	16
 
-#define FB_WIDTH		1184
-#define FB_HEIGHT		928
+#define FB_WIDTH		640
+#define FB_HEIGHT		480
 
 struct bcm_fb_config {
 	uint32_t	xres;
@@ -183,20 +183,16 @@ bcm_fb_probe(device_t dev)
 {
 	int error;
 
-	printf("%d\n", __LINE__);
 	if (!ofw_bus_is_compatible(dev, "broadcom,bcm2835-fb"))
 		return (ENXIO);
-	printf("%d\n", __LINE__);
 
 	device_set_desc(dev, "BCM2835 framebuffer device");
-	printf("%d\n", __LINE__);
 
 	error = sc_probe_unit(device_get_unit(dev), 
 	    device_get_flags(dev) | SC_AUTODETECT_KBD);
-	printf("%d\n", __LINE__);
+
 	if (error != 0)
 		return (error);
-	printf("%d\n", __LINE__);
 
 	return (BUS_PROBE_DEFAULT);
 }
@@ -376,7 +372,7 @@ RENDERER(bcmfb, 0, txtrndrsw, gfb_set);
 RENDERER_MODULE(bcmfb, gfb_set);
 
 static uint16_t bcmfb_static_window[ROW*COL];
-extern u_char dflt_font_8[];
+extern u_char dflt_font_16[];
 
 static int
 bcmfb_configure(int flags)
@@ -418,7 +414,7 @@ bcmfb_init(int unit, video_adapter_t *adp, int flags)
 
 	vid_init_struct(adp, "bcmfb", -1, unit);
 
-	sc->font = dflt_font_8;
+	sc->font = dflt_font_16;
 	vi->vi_cheight = BCMFB_FONT_HEIGHT;
 	vi->vi_cwidth = 8;
 	vi->vi_width = sc->width/8;
