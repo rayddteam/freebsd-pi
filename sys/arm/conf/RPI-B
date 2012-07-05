@@ -79,6 +79,13 @@ device		gpio
 
 device		pty
 
+# Enable it for framebuffer support
+# NOTE: serial console will be disabled if syscons enabled
+# device		sc
+# device		kbdmux
+# options         SC_DFLT_FONT    # compile font in
+# makeoptions     SC_DFLT_FONT=cp437
+
 # options		VERBOSE_SYSINIT		#Enable verbose sysinit messages
 options 	KDB
 options 	DDB			#Enable the kernel debugger
