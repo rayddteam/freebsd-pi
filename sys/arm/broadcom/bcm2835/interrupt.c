@@ -63,7 +63,7 @@ __FBSDID("$FreeBSD$");
 
 #define	IS_IRQ_BASIC(n)	(((n) >= 0) && ((n) < BANK1_START))
 #define	IS_IRQ_BANK1(n)	(((n) >= BANK1_START) && ((n) <= BANK1_END))
-#define	IS_IRQ_BANK2(n)	(((n) >= BANK2_START) && ((n) <= BANK1_END))
+#define	IS_IRQ_BANK2(n)	(((n) >= BANK2_START) && ((n) <= BANK2_END))
 #define	IRQ_BANK1(n)	((n) - BANK1_START)
 #define	IRQ_BANK2(n)	((n) - BANK2_START)
 
