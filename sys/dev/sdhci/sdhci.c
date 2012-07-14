@@ -89,9 +89,9 @@ struct sdhci_softc {
 
 static SYSCTL_NODE(_hw, OID_AUTO, sdhci, CTLFLAG_RD, 0, "sdhci driver");
 
-int	sdhci_debug = 9999;
+int	sdhci_debug = 0;
 TUNABLE_INT("hw.sdhci.debug", &sdhci_debug);
-SYSCTL_INT(_hw_sdhci, OID_AUTO, debug, CTLFLAG_RW, &sdhci_debug, 999, "Debug level");
+SYSCTL_INT(_hw_sdhci, OID_AUTO, debug, CTLFLAG_RW, &sdhci_debug, 0, "Debug level");
 
 #define RD1(slot, off)	SDHCI_READ_1((slot)->bus, (slot), (off))
 #define RD2(slot, off)	SDHCI_READ_2((slot)->bus, (slot), (off))
@@ -230,7 +230,8 @@ static void
 sdhci_set_clock(struct sdhci_slot *slot, uint32_t clock)
 {
 	uint32_t res;
-	uint16_t clk;
+	uint16_t clk = 0;
+	uint16_t div;
 	int timeout;
 
 	if (clock == slot->clock)
@@ -242,19 +243,44 @@ sdhci_set_clock(struct sdhci_slot *slot, uint32_t clock)
 	/* If no clock requested - left it so. */
 	if (clock == 0)
 		return;
-	/* Looking for highest freq <= clock. */
-	res = slot->max_clk;
-	for (clk = 1; clk < 256; clk <<= 1) {
-		if (res <= clock)
-			break;
-		res >>= 1;
+	if (slot->version < SDHCI_SPEC_300) {
+		/* Looking for highest freq <= clock. */
+		res = slot->max_clk;
+		for (div = 1; div < 256; div <<= 1) {
+			if (res <= clock)
+				break;
+			res >>= 1;
+		}
+		/* Divider 1:1 is 0x00, 2:1 is 0x01, 256:1 is 0x80 ... */
+		div >>= 1;
+		/* Now we have got divider, set it. */
+		div <<= SDHCI_DIVIDER_SHIFT;
+		WR2(slot, SDHCI_CLOCK_CONTROL, div);
 	}
-	/* Divider 1:1 is 0x00, 2:1 is 0x01, 256:1 is 0x80 ... */
-	clk >>= 1;
-	printf("Divider for cloeck %d is %04x\n", clock, clk);
-	/* Now we have got divider, set it. */
-	clk <<= SDHCI_DIVIDER_SHIFT;
+	else {
+		/* Version 3.0 divisors are multiple of two up to 1023*12 */
+		if (clock > slot->max_clk)
+			div = 1;
+		else {
+			for (div = 2; div < 1023*2; div += 2) {
+				if ((slot->max_clk / div) <= clock) 
+					break;
+			}
+			div /= 2;
+		}
+		div >>= 1;
+	}
+
+	if (sdhci_debug)
+		slot_printf(slot, "Divider %d for freq %d (max %d)\n", 
+			div, clock, slot->max_clk);
+
+	/* Now we have got clkider, set it. */
+	clk = (div & SDHCI_DIVIDER_MASK) << SDHCI_DIVIDER_SHIFT;
+	clk |= ((div >> SDHCI_DIVIDER_MASK_LEN) & SDHCI_DIVIDER_HI_MASK)
+		<< SDHCI_DIVIDER_HI_SHIFT;
 	WR2(slot, SDHCI_CLOCK_CONTROL, clk);
+
 	/* Enable clock. */
 	clk |= SDHCI_CLOCK_INT_EN;
 	WR2(slot, SDHCI_CLOCK_CONTROL, clk);
@@ -283,6 +309,7 @@ sdhci_set_power(struct sdhci_slot *slot, u_char power)
 
 	if (slot->power == power)
 		return;
+
 	slot->power = power;
 
 	/* Turn off the power. */
@@ -339,7 +366,7 @@ sdhci_read_block_pio(struct sdhci_slot *slot)
 			left -= 4;
 		}
 	} else {
-		bus_read_multi_stream_4(slot->mem_res, SDHCI_BUFFER,
+		bus_read_multi_4(slot->mem_res, SDHCI_BUFFER,
 		    (uint32_t *)buffer, left >> 2);
 		left &= 3;
 	}
@@ -379,7 +406,7 @@ sdhci_write_block_pio(struct sdhci_slot *slot)
 			WR4(slot, SDHCI_BUFFER, data);
 		}
 	} else {
-		bus_write_multi_stream_4(slot->mem_res, SDHCI_BUFFER,
+		bus_write_multi_4(slot->mem_res, SDHCI_BUFFER,
 		    (uint32_t *)buffer, left >> 2);
 		left &= 3;
 	}
@@ -462,6 +489,8 @@ sdhci_init_slot(device_t dev, struct sdhci_slot *slot)
 
 	/* Initialize slot. */
 	sdhci_init(slot);
+	slot->version = (RD2(slot, SDHCI_HOST_VERSION) 
+		>> SDHCI_SPEC_VER_SHIFT) & SDHCI_SPEC_VER_MASK;
 	caps = RD4(slot, SDHCI_CAPABILITIES);
 	/* Calculate base clock frequency. */
 	slot->max_clk =
@@ -716,7 +745,7 @@ sdhci_start_command(struct sdhci_slot *slot, struct mmc_command *cmd)
 	/* Set data transfer mode. */
 	sdhci_set_transfer_mode(slot, cmd->data);
 	/* Start command. */
-	WR2(slot, SDHCI_COMMAND, (cmd->opcode << 8) | (flags & 0xff));
+	WR2(slot, SDHCI_COMMAND_FLAGS, (cmd->opcode << 8) | (flags & 0xff));
 }
 
 static void
@@ -779,7 +808,6 @@ sdhci_start_data(struct sdhci_slot *slot, struct mmc_data *data)
 			break;
 	}
 	/* Compensate for an off-by-one error in the CaFe chip.*/
-	printf("Timeout div: %d\n", div);
 	if (slot->quirks & SDHCI_QUIRK_INCR_TIMEOUT_CONTROL)
 		div++;
 	if (div >= 0xF) {
@@ -1029,8 +1057,9 @@ sdhci_data_irq(struct sdhci_slot *slot, uint32_t intmask)
 	}
 
 	/* Handle PIO interrupt. */
-	if (intmask & (SDHCI_INT_DATA_AVAIL | SDHCI_INT_SPACE_AVAIL))
+	if (intmask & (SDHCI_INT_DATA_AVAIL | SDHCI_INT_SPACE_AVAIL)) {
 		sdhci_transfer_pio(slot);
+	}
 	/* Handle DMA border. */
 	if (intmask & SDHCI_INT_DMA_END) {
 		struct mmc_data *data = slot->curcmd->data;

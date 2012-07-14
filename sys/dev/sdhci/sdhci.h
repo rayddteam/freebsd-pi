@@ -86,8 +86,6 @@
 #define  SDHCI_CMD_TYPE_ABORT	0xc0
 #define  SDHCI_CMD_TYPE_MASK	0xc0
 
-#define SDHCI_COMMAND		0x0F
-
 #define SDHCI_RESPONSE		0x10
 
 #define SDHCI_BUFFER		0x20
@@ -128,7 +126,11 @@
 #define SDHCI_WAKE_UP_CONTROL	0x2B
 
 #define SDHCI_CLOCK_CONTROL	0x2C
+#define  SDHCI_DIVIDER_MASK	0xff
+#define  SDHCI_DIVIDER_MASK_LEN	8
 #define  SDHCI_DIVIDER_SHIFT	8
+#define  SDHCI_DIVIDER_HI_MASK	3
+#define  SDHCI_DIVIDER_HI_SHIFT	6
 #define  SDHCI_CLOCK_CARD_EN	0x0004
 #define  SDHCI_CLOCK_INT_STABLE	0x0002
 #define  SDHCI_CLOCK_INT_EN	0x0001
@@ -202,6 +204,10 @@
 #define  SDHCI_VENDOR_VER_SHIFT	8
 #define  SDHCI_SPEC_VER_MASK	0x00FF
 #define  SDHCI_SPEC_VER_SHIFT	0
+#define   SDHCI_SPEC_100        0
+#define   SDHCI_SPEC_200        1
+#define   SDHCI_SPEC_300        2
+
 
 struct sdhci_slot {
 	u_int		quirks;		/* Chip specific quirks */
@@ -209,6 +215,7 @@ struct sdhci_slot {
 	device_t	dev;		/* Slot device */
 	u_char		num;		/* Slot number */
 	u_char		opt;		/* Slot options */
+	u_char		version;
 #define SDHCI_HAVE_DMA		1
 	uint32_t	max_clk;	/* Max possible freq */
 	uint32_t	timeout_clk;	/* Timeout freq */
