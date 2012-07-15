@@ -107,7 +107,8 @@ device		random		# Entropy device
 # USB support
 device		usb
 # device		dwc_otg
-options 	USB_DEBUG
+# device		dotg
+#options 	USB_DEBUG
 #options	USB_REQ_DEBUG
 #options		USB_VERBOSE
 
@@ -115,6 +116,10 @@ options 	USB_DEBUG
 # USB Ethernet support, requires miibus
 device		miibus
 device		smsc		# SMSC LAN95xx USB Ethernet
+
+device		mmc
+device		sdhci
+device		mmcsd
 
 
 # Flattened Device Tree
