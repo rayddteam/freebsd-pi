@@ -89,7 +89,7 @@ __FBSDID("$FreeBSD$");
 #include <machine/bus.h>
 #include <sys/reboot.h>
 
-#include <arm/ti/omap4/omap4_reg.h>
+#include <arm/broadcom/bcm2835/wdog_brcm.h>
 
 #define  DEBUG
 #ifdef  DEBUG
@@ -458,7 +458,7 @@ initarm(void *mdp, void *unused __unused)
 		    &kernel_pt_table[i]);
 
 	pmap_curmaxkvaddr = l2_start + (l2size - 1) * L1_S_SIZE;
-	
+
 	/* Map kernel code and data */
 	pmap_map_chunk(l1pagetable, KERNVIRTADDR, KERNPHYSADDR,
 	   (((uint32_t)(lastaddr) - KERNVIRTADDR) + PAGE_MASK) & ~PAGE_MASK,
@@ -612,7 +612,7 @@ platform_devmap_init(void)
 	int i = 0;
 
 	fdt_devmap[i].pd_va = 0xf2000000;
-	fdt_devmap[i].pd_pa = 0x20000000;       
+	fdt_devmap[i].pd_pa = 0x20000000;
 	fdt_devmap[i].pd_size = 0x01000000;       /* 1 MB */
 	fdt_devmap[i].pd_prot = VM_PROT_READ | VM_PROT_WRITE;
 	fdt_devmap[i].pd_cache = PTE_DEVICE;
@@ -639,7 +639,7 @@ bus_dma_get_range_nb(void)
 void
 cpu_reset()
 {
-	printf("Reset not implemented!\n");
+	bcmwd_watchdog_reset();
 	while (1);
 }
 
