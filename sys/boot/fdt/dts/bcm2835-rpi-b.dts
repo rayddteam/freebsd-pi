@@ -92,6 +92,27 @@
 			clock-frequency = <1000000>;
 		};
 
+		dma: dma {
+			compatible = "broadcom,bcm2835-dma", "broadcom,bcm2708-dma";
+			reg = <0x7000 0x1000>, <0xE05000 0x1000>;
+			interrupts = <
+				26	/*  2 */
+				27	/*  3 */
+			>;
+			interrupt-parent = <&intc>;
+
+			broadcom,channels = <0>;	/* Set by VideoCore */
+		};
+
+		sdhci {
+			compatible = "broadcom,bcm2835-sdhci", "broadcom,bcm2708-sdhci";
+			reg = <0x300000 0x100>;
+			interrupts = <70>;
+			interrupt-parent = <&intc>;
+
+			clock-frequency = <50000000>;	/* Set by VideoCore */
+		};
+
 		armtimer {
 			/* Not AMBA compatible */
 			compatible = "broadcom,bcm2835-sp804", "arm,sp804";
@@ -115,6 +136,11 @@
 			 * 5: Buttons
 			 * 6: Touch screen
 			 */
+		};
+
+		watchdog0 {
+			compatible = "broadcom,bcm2835-wdt", "broadcom,bcm2708-wdt";
+			reg = <0x10001c 0x0c>; /* 0x1c, 0x20, 0x24 */
 		};
 
 		gpio: gpio {
@@ -441,7 +467,6 @@
 			clock-frequency = <3000000>;	/* Set by VideoCore */
 			reg-shift = <2>;
 		};
-
 
 		usb {
 			compatible = "broadcom,bcm2835-usb", "broadcom,bcm2708-usb", "synopsys,designware-hs-otg2";
