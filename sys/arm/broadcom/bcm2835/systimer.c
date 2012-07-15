@@ -161,15 +161,13 @@ brcm_systimer_intr(void *arg)
 			st->et.et_event_cb(&st->et, st->et.et_arg);
 		}
 	}
-	
+
 	return (FILTER_HANDLED);
 }
 
 static int
 brcm_systimer_probe(device_t dev)
 {
-	struct	brcm_systimer_softc *sc;
-	sc = (struct brcm_systimer_softc *)device_get_softc(dev);
 
 	if (ofw_bus_is_compatible(dev, "broadcom,bcm2835-system-timer")) {
 		device_set_desc(dev, "BCM2835 System Timer");
