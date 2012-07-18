@@ -273,6 +273,7 @@ WR4(struct bcm_sdhci_softc *sc, bus_size_t off, uint32_t val)
 {
 	// printf("WR4 [%02x] := %08x\n", (unsigned int)off, val);
 	bus_space_write_4(sc->sc_bst, sc->sc_bsh, off, val);
+
 	if ((off != SDHCI_BUFFER && off != SDHCI_INT_STATUS && off != SDHCI_CLOCK_CONTROL))
 	{
 		int timeout = 100000;
@@ -286,7 +287,6 @@ WR4(struct bcm_sdhci_softc *sc, bus_size_t off, uint32_t val)
 				val, (uint32_t)off, 
 				bus_space_read_4(sc->sc_bst, sc->sc_bsh, off));
 	}
-	DELAY(1000);
 }
 
 static uint8_t
