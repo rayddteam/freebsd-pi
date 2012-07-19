@@ -135,7 +135,9 @@ static int mmc_wait_for_cmd(struct mmc_softc *sc, struct mmc_command *cmd,
 static int mmc_wait_for_command(struct mmc_softc *sc, uint32_t opcode,
     uint32_t arg, uint32_t flags, uint32_t *resp, int retries);
 static int mmc_select_card(struct mmc_softc *sc, uint16_t rca);
+#ifdef NOT_YET_FOR_RPI
 static int mmc_set_card_bus_width(struct mmc_softc *sc, uint16_t rca, int width);
+#endif
 static int mmc_app_send_scr(struct mmc_softc *sc, uint16_t rca, uint32_t *rawscr);
 static void mmc_app_decode_scr(uint32_t *raw_scr, struct mmc_scr *scr);
 static int mmc_send_ext_csd(struct mmc_softc *sc, uint8_t *rawextcsd);
@@ -601,6 +603,7 @@ mmc_sd_switch(struct mmc_softc *sc, uint8_t mode, uint8_t grp, uint8_t value,
 	return (err);
 }
 
+#ifdef NOT_YET_FOR_RPI
 static int
 mmc_set_card_bus_width(struct mmc_softc *sc, uint16_t rca, int width)
 {
@@ -649,6 +652,7 @@ mmc_set_card_bus_width(struct mmc_softc *sc, uint16_t rca, int width)
 	}
 	return (err);
 }
+#endif
 
 static int
 mmc_set_timing(struct mmc_softc *sc, int timing)
