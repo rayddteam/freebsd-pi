@@ -46,13 +46,14 @@ options 	UFS_ACL			#Support for access control lists
 options 	UFS_DIRHASH		#Improve performance on big directories
 device		snp
 
-options 	NFSCL		#Network Filesystem Client
-options 	NFS_ROOT		#NFS usable as /, requires NFSCLIENT
-options		BOOTP_NFSROOT
-options		BOOTP_COMPAT
-options		BOOTP
-options		BOOTP_NFSV3
-options		BOOTP_WIRED_TO=ue0
+# options 	NFSCL		#Network Filesystem Client
+# options 	NFS_ROOT		#NFS usable as /, requires NFSCLIENT
+# options		BOOTP_NFSROOT
+# options		BOOTP_COMPAT
+# options		BOOTP
+# options		BOOTP_NFSV3
+# options		BOOTP_WIRED_TO=ue0
+options		ROOTDEVNAME=\"ufs:/dev/mmcsd0s2\"
 
 options 	PSEUDOFS		#Pseudo-filesystem framework
 options 	COMPAT_43		#Compatible with BSD 4.3 [KEEP THIS!]
