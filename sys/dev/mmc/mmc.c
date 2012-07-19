@@ -247,9 +247,11 @@ mmc_acquire_bus(device_t busdev, device_t dev)
 				    (ivar->bus_width == bus_width_4) ? 4 :
 				    (ivar->bus_width == bus_width_8) ? 8 : 1);
 			}
+#ifdef NOT_YET_FOR_RPI
 			mmc_set_card_bus_width(sc, rca, ivar->bus_width);
 			mmcbr_set_bus_width(busdev, ivar->bus_width);
 			mmcbr_update_ios(busdev);
+#endif
 		}
 	} else {
 		/*
