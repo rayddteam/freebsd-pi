@@ -200,7 +200,7 @@ brcm_dma_attach(device_t dev)
 
 	/* Setup and enable the timer */
 	for (i = 0; bcm_dma_irq_spec[i].type != -1; i++) {
-		if (bus_setup_intr(dev, sc->irq_res[i], INTR_TYPE_MISC,
+		if (bus_setup_intr(dev, sc->irq_res[i], INTR_TYPE_MISC | INTR_MPSAFE,
 				NULL, brcm_dma_intr, sc,
 				&sc->intr_hl[i]) != 0) {
 			device_printf(dev, "Unable to setup the clock irq handler.\n");
