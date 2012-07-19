@@ -721,6 +721,7 @@ parse_mount(char **conf)
 		delay = hz / 10;
 		timeout = root_mount_timeout * hz;
 		do {
+			printf("delay = %d, timeout = %d\n", delay, timeout);
 			pause("rmdev", delay);
 			timeout -= delay;
 		} while (timeout > 0 && !parse_mount_dev_present(dev));
